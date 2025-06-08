@@ -10,3 +10,4 @@ numpy==1.26.4
 fastapi==0.115.12
 uvicorn==0.34.3
 bitsandbytes==0.45.0
+soundfile==0.13.1

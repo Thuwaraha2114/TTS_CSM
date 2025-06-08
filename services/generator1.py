@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import List, Tuple
-
 import torch
 import torchaudio
 from huggingface_hub import hf_hub_download
@@ -8,7 +7,7 @@ from .models import Model
 from moshi.models import loaders
 from tokenizers.processors import TemplateProcessing
 from transformers import AutoTokenizer
-
+from pathlib import Path
 
 @dataclass
 class Segment:
@@ -19,6 +18,7 @@ class Segment:
 
 def load_llama3_tokenizer():
     tokenizer_name = "meta-llama/Llama-3.2-1B"
+    #tokenizer_name = r"C:\Users\Insharp\.cache\huggingface\hub\models--meta-llama--Llama-3.2-1B\snapshots\4e20de362430cd3b72f300e6b0f18e50e7166e08"
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
     bos = tokenizer.bos_token
     eos = tokenizer.eos_token
@@ -37,6 +37,9 @@ class Generator:
 
         self._text_tokenizer = load_llama3_tokenizer()
 
+        #local_model_path = Path(r"C:\Users\Insharp\.cache\huggingface\hub\models--kyutai--moshiko-pytorch-bf16\snapshots\2bfc9ae6e89079a5cc7ed2a68436010d91a3d289\tokenizer-e351c8d8-checkpoint125.safetensors")
+        #print(local_model_path)
+        #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         device = next(model.parameters()).device
         mimi_weight = hf_hub_download(loaders.DEFAULT_REPO, loaders.MIMI_NAME)
         mimi = loaders.get_mimi(mimi_weight, device=device)
@@ -128,5 +131,6 @@ class Generator:
 
 def load_csm_1b(device: str = "cuda") -> Generator:
     model = Model.from_pretrained("sesame/csm-1b")
+    #model = Model.from_pretrained(r"C:\Users\Insharp\.cache\huggingface\hub\models--sesame--csm-1b\snapshots\03ab46ff5cfdcc783cc76fcf9ea6fd0838503093")
     model.to(device=device, dtype=torch.bfloat16)
     return Generator(model)
